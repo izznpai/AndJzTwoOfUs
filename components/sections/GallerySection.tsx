@@ -1,91 +1,56 @@
 "use client";
 
 import { useRef } from "react";
+import Image from "next/image";
 import { motion, useInView } from "framer-motion";
 import { FloralDecoration } from "@/components/ui/FloralDecoration";
 import { SectionLabel } from "@/components/ui/SectionLabel";
 
-const galleryItems = [
-  {
-    id: 1,
-    gradient: "linear-gradient(135deg, #C8D9C4 0%, #8FAF87 100%)",
-    size: "large",
-    aspect: "aspect-[3/4]",
-    label: "Engagement Photo",
-  },
-  {
-    id: 2,
-    gradient: "linear-gradient(135deg, #C5B8D8 0%, #B0C8D4 100%)",
-    size: "small",
-    aspect: "aspect-square",
-    label: "Add Photo",
-  },
-  {
-    id: 3,
-    gradient: "linear-gradient(135deg, #F2EDE4 0%, #D8CDBF 100%)",
-    size: "small",
-    aspect: "aspect-square",
-    label: "Add Photo",
-  },
-  {
-    id: 4,
-    gradient: "linear-gradient(135deg, #7B9BAC 0%, #B0C8D4 100%)",
-    size: "medium",
-    aspect: "aspect-[4/3]",
-    label: "Engagement Photo",
-  },
-  {
-    id: 5,
-    gradient: "linear-gradient(135deg, #A8C5A0 0%, #C8D9C4 100%)",
-    size: "medium",
-    aspect: "aspect-[4/3]",
-    label: "Add Photo",
-  },
-  {
-    id: 6,
-    gradient: "linear-gradient(135deg, #D8CEEA 0%, #C5B8D8 100%)",
-    size: "large",
-    aspect: "aspect-[3/4]",
-    label: "Engagement Photo",
-  },
+const photos = [
+  { src: "/Gallery/1 (1).png", alt: "Andi and Jz" },
+  { src: "/Gallery/1 (2).png", alt: "Andi and Jz" },
+  { src: "/Gallery/1 (3).png", alt: "Andi and Jz" },
+  { src: "/Gallery/1 (4).png", alt: "Andi and Jz" },
+  { src: "/Gallery/1 (5).png", alt: "Andi and Jz" },
+  { src: "/Gallery/1 (6).png", alt: "Andi and Jz" },
+  { src: "/Gallery/1 (7).png", alt: "Andi and Jz" },
 ];
 
-function GalleryItem({ item, delay }: { item: (typeof galleryItems)[0]; delay: number }) {
+function GalleryPhoto({
+  photo,
+  delay,
+  className = "",
+}: {
+  photo: (typeof photos)[0];
+  delay: number;
+  className?: string;
+}) {
   const ref = useRef(null);
   const inView = useInView(ref, { once: true, margin: "-60px" });
 
   return (
     <motion.div
       ref={ref}
-      initial={{ opacity: 0, y: 24, scale: 0.98 }}
-      animate={inView ? { opacity: 1, y: 0, scale: 1 } : {}}
-      transition={{ duration: 1, delay, ease: [0.25, 0.1, 0.25, 1] }}
-      className={`group relative overflow-hidden ${item.aspect} cursor-pointer`}
+      initial={{ opacity: 0, scale: 0.97 }}
+      animate={inView ? { opacity: 1, scale: 1 } : {}}
+      transition={{ duration: 1.1, delay, ease: [0.25, 0.1, 0.25, 1] }}
+      className={`group relative overflow-hidden cursor-pointer ${className}`}
     >
-      {/* Photo placeholder */}
-      <div
-        className="absolute inset-0 transition-transform duration-700 group-hover:scale-105"
-        style={{ background: item.gradient }}
+      <Image
+        src={photo.src}
+        alt={photo.alt}
+        fill
+        quality={90}
+        className="object-cover transition-transform duration-700 ease-out group-hover:scale-105"
+        sizes="(max-width: 768px) 100vw, 50vw"
       />
-
       {/* Hover overlay */}
-      <div className="absolute inset-0 bg-[#3a3530]/0 group-hover:bg-[#3a3530]/15 transition-all duration-500" />
-
-      {/* Label overlay */}
-      <div className="absolute inset-0 flex flex-col items-center justify-center gap-2 opacity-40 group-hover:opacity-60 transition-opacity duration-500">
-        <FloralDecoration variant="small" color="#8FAF87" opacity={0.6} />
-        <p className="font-sans text-[8px] tracking-[0.3em] uppercase text-[#3a3530]/50">
-          {item.label}
-        </p>
-      </div>
-
+      <div className="absolute inset-0 bg-[#3a3530]/0 group-hover:bg-[#3a3530]/20 transition-all duration-500" />
       {/* View hint */}
-      <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-all duration-500">
-        <div className="bg-white/85 backdrop-blur-sm px-6 py-3 translate-y-2 group-hover:translate-y-0 transition-transform duration-500">
-          <p className="font-sans text-[9px] tracking-[0.3em] uppercase text-[#3a3530]/60">
-            View
-          </p>
-        </div>
+      <div className="absolute inset-0 flex items-end justify-start p-5 opacity-0 group-hover:opacity-100 transition-all duration-500">
+        <span className="font-sans text-[8px] tracking-[0.4em] uppercase text-white/80 border-b border-white/40 pb-px">
+          View
+        </span>
       </div>
     </motion.div>
   );
@@ -138,51 +103,76 @@ export function GallerySection() {
           </motion.div>
         </div>
 
-        {/* Gallery Grid — editorial layout */}
-        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3 md:gap-4 mb-6">
-          {/* Row 1: large + 2 small */}
-          <div className="col-span-1 md:col-span-2 row-span-2">
-            <GalleryItem item={galleryItems[0]} delay={0.1} />
-          </div>
-          <div className="col-span-1">
-            <GalleryItem item={galleryItems[1]} delay={0.2} />
-          </div>
-          <div className="col-span-1">
-            <GalleryItem item={galleryItems[2]} delay={0.25} />
-          </div>
-
-          {/* Row 2: spans */}
-          <div className="col-span-1 md:col-span-2">
-            <GalleryItem item={galleryItems[3]} delay={0.3} />
-          </div>
-        </div>
-
-        {/* Second row */}
-        <div className="grid grid-cols-2 md:grid-cols-3 gap-3 md:gap-4">
-          <div className="col-span-1 md:col-span-2">
-            <GalleryItem item={galleryItems[4]} delay={0.35} />
-          </div>
-          <div className="col-span-1">
-            <GalleryItem item={galleryItems[5]} delay={0.4} />
-          </div>
-        </div>
-
-        {/* CTA */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.8, delay: 0.3 }}
-          className="text-center mt-16"
+        {/* Editorial grid — desktop: 3 cols × 4 rows */}
+        <div
+          className="hidden md:grid gap-3"
+          style={{
+            gridTemplateColumns: "repeat(3, 1fr)",
+            gridTemplateRows: "360px 360px 280px 280px",
+          }}
         >
-          <a
-            href="#gallery-full"
-            className="inline-flex items-center gap-3 font-sans text-[10px] tracking-[0.35em] uppercase text-sage border-b border-sage/40 pb-1 hover:border-sage transition-colors duration-300"
-          >
-            View Full Gallery
-            <span className="text-base leading-none">→</span>
-          </a>
-        </motion.div>
+          {/* 1 — large portrait, top-left spanning 2 rows */}
+          <GalleryPhoto
+            photo={photos[0]}
+            delay={0.05}
+            className="[grid-column:1] [grid-row:1/3]"
+          />
+          {/* 2 — top right */}
+          <GalleryPhoto
+            photo={photos[1]}
+            delay={0.1}
+            className="[grid-column:2] [grid-row:1]"
+          />
+          {/* 3 — middle right */}
+          <GalleryPhoto
+            photo={photos[2]}
+            delay={0.15}
+            className="[grid-column:3] [grid-row:1]"
+          />
+          {/* 4 — second row middle */}
+          <GalleryPhoto
+            photo={photos[3]}
+            delay={0.2}
+            className="[grid-column:2] [grid-row:2]"
+          />
+          {/* 5 — second row right */}
+          <GalleryPhoto
+            photo={photos[4]}
+            delay={0.25}
+            className="[grid-column:3] [grid-row:2]"
+          />
+          {/* 6 — bottom left wide */}
+          <GalleryPhoto
+            photo={photos[5]}
+            delay={0.3}
+            className="[grid-column:1/3] [grid-row:3/5]"
+          />
+          {/* 7 — bottom right tall */}
+          <GalleryPhoto
+            photo={photos[6]}
+            delay={0.35}
+            className="[grid-column:3] [grid-row:3/5]"
+          />
+        </div>
+
+        {/* Mobile: 2-col simple grid */}
+        <div className="grid grid-cols-2 gap-3 md:hidden">
+          {photos.map((photo, i) => (
+            <div
+              key={i}
+              className={`relative overflow-hidden ${i === 0 ? "col-span-2 aspect-[16/9]" : "aspect-square"}`}
+            >
+              <Image
+                src={photo.src}
+                alt={photo.alt}
+                fill
+                quality={85}
+                className="object-cover"
+                sizes="(max-width: 768px) 50vw, 33vw"
+              />
+            </div>
+          ))}
+        </div>
       </div>
     </section>
   );

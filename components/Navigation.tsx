@@ -36,11 +36,9 @@ export function Navigation() {
           {/* Brand */}
           <a
             href="#hero"
-            className={`font-script text-2xl transition-colors duration-500 ${
-              scrolled ? "text-sage-dark" : "text-white"
-            }`}
+            className="font-script text-4xl text-white"
           >
-            AndJzTheTwoOfUs
+            A+J
           </a>
 
           {/* Desktop Links */}
@@ -96,7 +94,7 @@ export function Navigation() {
             className="fixed inset-0 z-40 bg-warm-white/97 backdrop-blur-sm flex flex-col items-center justify-center gap-10"
           >
             <a href="#hero" className="font-script text-3xl text-sage-dark mb-6">
-              AndJzTheTwoOfUs
+              A+J
             </a>
             {navLinks.map((link, i) => (
               <motion.a

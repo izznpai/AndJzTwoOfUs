@@ -3,16 +3,13 @@
 import { useState, useEffect, useRef } from "react";
 import { motion, useInView } from "framer-motion";
 import { FloralDecoration } from "@/components/ui/FloralDecoration";
-import { SectionLabel } from "@/components/ui/SectionLabel";
 
 const WEDDING_DATE = new Date("2026-10-22T15:30:00");
 
 function getTimeLeft() {
   const now = new Date();
   const diff = WEDDING_DATE.getTime() - now.getTime();
-
   if (diff <= 0) return { days: 0, hours: 0, minutes: 0, seconds: 0 };
-
   return {
     days: Math.floor(diff / (1000 * 60 * 60 * 24)),
     hours: Math.floor((diff / (1000 * 60 * 60)) % 24),
@@ -21,52 +18,38 @@ function getTimeLeft() {
   };
 }
 
-function CountdownUnit({ value, label, delay }: { value: number; label: string; delay: number }) {
+function Unit({ value, label, delay }: { value: number; label: string; delay: number }) {
   const ref = useRef(null);
-  const inView = useInView(ref, { once: true, margin: "-80px" });
+  const inView = useInView(ref, { once: true });
 
   return (
     <motion.div
       ref={ref}
-      initial={{ opacity: 0, y: 30 }}
+      initial={{ opacity: 0, y: 24 }}
       animate={inView ? { opacity: 1, y: 0 } : {}}
-      transition={{ duration: 0.8, delay, ease: [0.25, 0.1, 0.25, 1] }}
+      transition={{ duration: 1, delay, ease: [0.25, 0.1, 0.25, 1] }}
       className="flex flex-col items-center"
     >
-      <div className="relative group">
-        {/* Card */}
-        <div className="
-          relative overflow-hidden
-          w-[90px] h-[100px] md:w-[130px] md:h-[140px] lg:w-[160px] lg:h-[170px]
-          bg-white/80 backdrop-blur-sm
-          border border-beige-dark/60
-          flex items-center justify-center
-          shadow-card
-          transition-all duration-500 group-hover:shadow-card-hover group-hover:scale-[1.02]
-        ">
-          {/* Subtle inner glow */}
-          <div className="absolute inset-0 bg-gradient-to-b from-white/40 to-transparent pointer-events-none" />
+      {/* Number */}
+      <motion.span
+        key={value}
+        initial={{ opacity: 0.6, y: -8 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.5, ease: "easeOut" }}
+        className="font-serif font-light leading-none text-[#FAF7F2]"
+        style={{ fontSize: "clamp(3.5rem, 8vw, 7.5rem)", letterSpacing: "-0.02em" }}
+      >
+        {String(value).padStart(2, "0")}
+      </motion.span>
 
-          <motion.span
-            key={value}
-            initial={{ y: -10, opacity: 0.6 }}
-            animate={{ y: 0, opacity: 1 }}
-            transition={{ duration: 0.4, ease: "easeOut" }}
-            className="font-serif font-light text-[#3a3530] leading-none select-none"
-            style={{ fontSize: "clamp(2.5rem, 6vw, 4.5rem)" }}
-          >
-            {String(value).padStart(2, "0")}
-          </motion.span>
-        </div>
+      {/* Hairline */}
+      <div className="w-6 h-px bg-[#8FAF87]/50 mt-5 mb-4" />
 
-        {/* Corner accents */}
-        <div className="absolute top-1.5 left-1.5 w-4 h-4 border-t border-l border-sage/40" />
-        <div className="absolute top-1.5 right-1.5 w-4 h-4 border-t border-r border-sage/40" />
-        <div className="absolute bottom-1.5 left-1.5 w-4 h-4 border-b border-l border-sage/40" />
-        <div className="absolute bottom-1.5 right-1.5 w-4 h-4 border-b border-r border-sage/40" />
-      </div>
-
-      <p className="font-sans text-[9px] md:text-[10px] tracking-[0.35em] uppercase text-sage mt-5">
+      {/* Label */}
+      <p
+        className="font-sans uppercase tracking-[0.45em] text-[#FAF7F2]/35"
+        style={{ fontSize: "8px" }}
+      >
         {label}
       </p>
     </motion.div>
@@ -75,88 +58,98 @@ function CountdownUnit({ value, label, delay }: { value: number; label: string; 
 
 export function CountdownSection() {
   const [time, setTime] = useState(getTimeLeft());
-  const sectionRef = useRef(null);
-  const inView = useInView(sectionRef, { once: true, margin: "-60px" });
+  const ref = useRef(null);
+  const inView = useInView(ref, { once: true });
 
   useEffect(() => {
     const interval = setInterval(() => setTime(getTimeLeft()), 1000);
     return () => clearInterval(interval);
   }, []);
 
+  const units = [
+    { value: time.days, label: "Days" },
+    { value: time.hours, label: "Hours" },
+    { value: time.minutes, label: "Minutes" },
+    { value: time.seconds, label: "Seconds" },
+  ];
+
   return (
-    <section className="relative py-28 md:py-36 bg-parchment overflow-hidden" ref={sectionRef}>
-      {/* Background texture */}
-      <div className="absolute inset-0 bg-gradient-to-b from-beige/50 via-parchment to-beige/30 pointer-events-none" />
+    <section
+      ref={ref}
+      className="relative overflow-hidden py-28 md:py-40"
+      style={{ backgroundColor: "#2C3D2E" }}
+    >
+      {/* Subtle texture overlay */}
+      <div
+        className="absolute inset-0 opacity-[0.04] pointer-events-none"
+        style={{
+          backgroundImage: `url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E")`,
+          backgroundSize: "200px",
+        }}
+      />
 
-      {/* Side botanical decorations */}
-      <div className="absolute left-0 top-1/2 -translate-y-1/2 opacity-15 hidden lg:block">
-        <FloralDecoration variant="branch-left" color="#8FAF87" opacity={1} />
+      {/* Faint botanical side accents */}
+      <div className="absolute left-0 top-1/2 -translate-y-1/2 opacity-10 hidden lg:block">
+        <FloralDecoration variant="branch-left" color="#FAF7F2" opacity={1} />
       </div>
-      <div className="absolute right-0 top-1/2 -translate-y-1/2 opacity-15 hidden lg:block">
-        <FloralDecoration variant="branch-right" color="#8FAF87" opacity={1} />
+      <div className="absolute right-0 top-1/2 -translate-y-1/2 opacity-10 hidden lg:block">
+        <FloralDecoration variant="branch-right" color="#FAF7F2" opacity={1} />
       </div>
 
-      <div className="container-narrow text-center relative z-10">
-        {/* Label */}
-        <motion.div
+      <div className="relative z-10 container-narrow text-center">
+
+        {/* Eyebrow */}
+        <motion.p
+          initial={{ opacity: 0, y: 12 }}
+          animate={inView ? { opacity: 1, y: 0 } : {}}
+          transition={{ duration: 0.9 }}
+          className="font-sans text-[8px] tracking-[0.55em] uppercase text-[#FAF7F2]/30 mb-8"
+        >
+          The Big Day Is Coming
+        </motion.p>
+
+        {/* Script heading */}
+        <motion.h2
           initial={{ opacity: 0, y: 16 }}
           animate={inView ? { opacity: 1, y: 0 } : {}}
-          transition={{ duration: 0.8 }}
+          transition={{ duration: 1, delay: 0.1 }}
+          className="font-script text-[3rem] md:text-[4.5rem] text-[#FAF7F2]/80 leading-none mb-4"
         >
-          <SectionLabel>The Big Day Is Coming</SectionLabel>
-        </motion.div>
-
-        {/* Heading */}
-        <motion.h2
-          initial={{ opacity: 0, y: 20 }}
-          animate={inView ? { opacity: 1, y: 0 } : {}}
-          transition={{ duration: 0.9, delay: 0.1 }}
-          className="font-serif font-light italic text-[#3a3530] mb-4"
-          style={{ fontSize: "clamp(2rem, 5vw, 3.5rem)", lineHeight: 1.1 }}
-        >
-          Counting Down Together
+          Andi &amp; Jz
         </motion.h2>
 
         <motion.p
           initial={{ opacity: 0 }}
           animate={inView ? { opacity: 1 } : {}}
-          transition={{ duration: 0.8, delay: 0.2 }}
-          className="font-serif italic text-[#3a3530]/50 text-lg mb-14 font-light"
+          transition={{ duration: 0.9, delay: 0.2 }}
+          className="font-serif italic font-light text-[#FAF7F2]/35 text-base mb-14"
         >
           until we say &ldquo;I do&rdquo;
         </motion.p>
 
-        <FloralDecoration variant="divider" color="#8FAF87" opacity={0.5} className="mb-14" />
+        {/* Floral divider */}
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={inView ? { opacity: 1 } : {}}
+          transition={{ duration: 0.9, delay: 0.25 }}
+          className="mb-16"
+        >
+          <FloralDecoration variant="divider" color="#8FAF87" opacity={0.35} />
+        </motion.div>
 
-        {/* Countdown units */}
-        <div className="flex items-start justify-center gap-4 md:gap-8 lg:gap-12">
-          <CountdownUnit value={time.days} label="Days" delay={0.1} />
-
-          <div className="font-serif text-3xl md:text-5xl text-sage/40 mt-8 md:mt-12 font-light select-none">
-            ·
-          </div>
-
-          <CountdownUnit value={time.hours} label="Hours" delay={0.2} />
-
-          <div className="font-serif text-3xl md:text-5xl text-sage/40 mt-8 md:mt-12 font-light select-none">
-            ·
-          </div>
-
-          <CountdownUnit value={time.minutes} label="Minutes" delay={0.3} />
-
-          <div className="font-serif text-3xl md:text-5xl text-sage/40 mt-8 md:mt-12 font-light select-none">
-            ·
-          </div>
-
-          <CountdownUnit value={time.seconds} label="Seconds" delay={0.4} />
+        {/* Units */}
+        <div className="flex items-start justify-center gap-8 md:gap-14 lg:gap-20">
+          {units.map(({ value, label }, i) => (
+            <Unit key={label} value={value} label={label} delay={0.1 + i * 0.08} />
+          ))}
         </div>
 
-        {/* Footer note */}
+        {/* Date stamp */}
         <motion.p
           initial={{ opacity: 0 }}
           animate={inView ? { opacity: 1 } : {}}
-          transition={{ duration: 0.8, delay: 0.6 }}
-          className="font-sans text-[10px] tracking-[0.25em] uppercase text-[#3a3530]/30 mt-14"
+          transition={{ duration: 0.9, delay: 0.55 }}
+          className="mt-16 font-sans text-[8px] tracking-[0.4em] uppercase text-[#FAF7F2]/20"
         >
           October 22, 2026 · 3:30 PM
         </motion.p>
